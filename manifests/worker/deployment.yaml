@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+  labels:
+    app: worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: api:001
+        command: ["celery", "-A", "celery_worker", "worker"]
+        imagePullPolicy: Never
+        env:
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: REDIS_URL
+          - name: EXAMPLE
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: EXAMPLE
+        resources:
+          requests:
+            memory: 820Mi
+            cpu: 800m
+          limits:
+            memory: 1024Mi
+            cpu: 1000m

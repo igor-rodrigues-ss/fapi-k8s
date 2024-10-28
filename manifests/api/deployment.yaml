@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: api:001
+        command: ["fastapi", "run", "main.py", "--root-path", "/", "--port", "8000"]
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: REDIS_URL
+          - name: EXAMPLE
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: EXAMPLE
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1024Mi
+            cpu: 800m
