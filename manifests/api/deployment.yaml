@@ -16,7 +16,6 @@ spec:
       containers:
       - name: api
         image: api:001
-        command: ["fastapi", "run", "main.py", "--root-path", "/", "--port", "8000"]
         imagePullPolicy: Never
         ports:
         - containerPort: 8000
