@@ -1,5 +1,11 @@
 ## Prepare Host
 
+## TODO:
+- Create the documentation
+- Configure Kustomization
+- Configure secrets for PRE and PROD environments
+- Create a crud for users
+
 #### Create cluster
 
 ```shell

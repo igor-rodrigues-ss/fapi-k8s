@@ -1,35 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-deployment
+  name: fapi-k8s
   labels:
-    app: api
+    app: fapi-k8s
 spec:
   selector:
     matchLabels:
-      app: api
+      app: fapi-k8s
   template:
     metadata:
       labels:
-        app: api
+        app: fapi-k8s
     spec:
       containers:
-      - name: api
-        image: api:001
+      - name: fapi-k8s
+        image: fapi-k8s:001
         imagePullPolicy: Never
         ports:
         - containerPort: 8000
-        env:
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                name: api-secret
-                key: REDIS_URL
-          - name: EXAMPLE
-            valueFrom:
-              secretKeyRef:
-                name: api-secret
-                key: EXAMPLE
+        envFrom:
+        - secretRef:
+            name: fapi-k8s
         resources:
           requests:
             memory: 512Mi
@@ -37,3 +29,16 @@ spec:
           limits:
             memory: 1024Mi
             cpu: 800m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fapi-k8s
+spec:
+  selector:
+    app: fapi-k8s
+  ports:
+    - name: fapi-k8s
+      protocol: TCP
+      port: 8000
+      targetPort: 8000

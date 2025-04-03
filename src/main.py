@@ -1,11 +1,18 @@
-import os
 from fastapi import FastAPI
 
-from settings import EXAMPLE
-from celery_worker import heavy_processing
+from src.core.config.envs import EXAMPLE
+
+from src.core.setup import databases, routes
+
+from src.tasks.heavy_processing import heavy_processing
 
 
 app = FastAPI()
+
+
+routes.setup(app)
+
+databases.setup()
 
 
 @app.get("/")

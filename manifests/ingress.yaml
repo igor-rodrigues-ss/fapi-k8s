@@ -11,6 +11,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: api-service
+            name: fapi-k8s
             port:
               number: 8000

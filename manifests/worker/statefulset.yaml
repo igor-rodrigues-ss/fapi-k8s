@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: worker
+  labels:
+    app: worker
+spec:
+  serviceName: worker
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: fapi-k8s:001
+        command: ["celery", "-A", "src.core.celery.app", "worker", "-E", "--loglevel=INFO", "--beat"]
+        imagePullPolicy: Never
+        envFrom:
+        - secretRef:
+            name: fapi-k8s
+        resources:
+          requests:
+            memory: 820Mi
+            cpu: 800m
+          limits:
+            memory: 1024Mi
+            cpu: 1000m

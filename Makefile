@@ -2,12 +2,12 @@ export PATH := $(PWD)/.venv/bin:$(PATH)
 export VIRTUAL_ENV := $(PWD)/.venv
 export SRC_DIR := $(shell ls */main.py | xargs dirname)
 
-PYTHON := python3.11
+PYTHON := python3.12
 COLOR="\033[36m%-30s\033[0m %s\n"
 
 ENV_EXISTS=0
 
-.PHONY: .env .venv deploy migrations
+.PHONY: .env .venv deploy migrations docs
 .DEFAULT_GOAL := help
 
 ifeq ($(wildcard .env), .env)
@@ -23,43 +23,70 @@ endif
 .rm-venv:
 	@if [ -d $(VIRTUAL_ENV) ]; then rm -rf $(VIRTUAL_ENV); fi
 
+.install-hook:
+	@echo "make lint" > .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+
 install: .venv ## Create .venv and install dependencies.
 	@if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
 reinstall: .rm-venv install ## Remove .venv if exists, create a new .venv and install dependencies.
 
-install-dev: install ## Create .venv and install dev dependencies.
+install-dev: install .install-hook ## Create .venv and install dev dependencies.
 	if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
 reinstall-dev: .rm-venv install-dev ## Remove .venv if exists, create a new .venv and install dev dependencies.
 
+clean: ## Clean unnecessary files.
+	@rm -rf .pytest_cache .coverage
+	@find . -name _pycache_ | xargs rm -rf
+	@find tests -name _pycache_ | xargs rm -rf
+
+lint: ## Lint code.
+	@black --line-length=100 --target-version=py38 --check src --check tests
+	@flake8 --max-line-length=250 --ignore=E402,W503 --exclude .venv,__app src tests
+
+format: ## Format code.
+	@black --line-length=100 --target-version=py38 .
+
+coverage: ## Run coverage tests.
+	@pytest --cov-config=.coveragerc --cov=src tests/ --cov-fail-under=95 --cov-report term-missing
+
+test: ## Run unit tests.
+	@pytest
+
 start:  ## Start api for development
-	@export $(cat .env) && fastapi dev app/main.py
+	@export $(cat .env) >> /dev/null && fastapi dev src/main.py
+
+celery: ## Start worker for development mode
+	@export $(cat .env) >> /dev/null && celery -A src.core.celery.app worker -E --loglevel=info --beat
+
+flower: ## Start flower for development mode
+	@export $(cat .env) >> /dev/null && celery -A src.core.celery.app flower -E --loglevel=info --port=5555
+
+docs: ## Start live docs server
+	@cd docs && mkdocs serve
 
 build: ## Create docker image
-	@docker image build -t api:001 .
+	@docker image build -t fapi-k8s:001 .
 
 image-to-cluster: ## Upload image to cluster
-	@docker save api:001 > api.tar
-	@microk8s ctr image import api.tar
-	@rm api.tar
-
-worker:  ## Start worker for development mode
-	@export $(cat .env)  && cd app && celery -A celery -A celery_worker worker --loglevel=info
+	@docker save fapi-k8s:001 > fapi-k8s.tar
+	@microk8s ctr image import fapi-k8s.tar
+	@rm fapi-k8s.tar
 
 update-cluster:  ## Update cluster
-	@microk8s kubectl apply -f manifests/api/secret.yaml
+	@microk8s kubectl apply -f manifests/secret.yaml
+
 	@microk8s kubectl apply -f manifests/api/deployment.yaml
-	@microk8s kubectl apply -f manifests/api/service.yaml
 	@microk8s kubectl apply -f manifests/api/hpa.yaml
-
-	@microk8s kubectl apply -f manifests/redis/deployment.yaml
-	@microk8s kubectl apply -f manifests/redis/service.yaml
-
-	@microk8s kubectl apply -f manifests/worker/deployment.yaml
+	@microk8s kubectl apply -f manifests/worker/statefulset.yaml
 	@microk8s kubectl apply -f manifests/worker/hpa.yaml
 
 	@microk8s kubectl apply -f manifests/ingress.yaml
+
+	@microk8s kubectl rollout restart deployment/fapi-k8s
+	@microk8s kubectl rollout restart statefulset/worker
 
 deploy: build image-to-cluster update-cluster # Build image and update cluster
 
