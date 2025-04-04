@@ -21,6 +21,7 @@ This project is a modern FastAPI application designed to run on Kubernetes clust
 - Kubernetes orchestration with Microk8s
 - Live documentation with MkDocs
 - Automated tasks with Makefile
+- Automated tests with pytest
 
 ## Prerequisites
 
