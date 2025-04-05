@@ -2,4 +2,4 @@ site_name: My Docs
 theme: readthedocs
 nav:
   - Home: index.md
-  - Infra: infra.md
+  - Cluster: cluster.md
