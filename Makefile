@@ -68,7 +68,7 @@ redis: ## [Host]: Start redis.
 	@sudo docker run -p 6379:6379 -d redis
 
 docs: ## Start live docs server
-	@cd docs && mkdocs serve
+	@cd docs && mkdocs serve --dev-addr 0.0.0.0:8001
 
 build: ## Create docker image
 	@docker image build -t fapi-k8s:001 .

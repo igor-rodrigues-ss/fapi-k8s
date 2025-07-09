@@ -1,4 +1,4 @@
-# FastAPI K8S
+# FastAPI Celery K8S
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.12-blue.svg)](https://fastapi.tiangolo.com/)
@@ -16,27 +16,24 @@ This project is a modern FastAPI application designed to run on Kubernetes clust
 - High-performance FastAPI backend
 - Asynchronous task processing with Celery
 - Redis for caching and task queue
-- Beanie for MongoDB ODM
 - Containerized deployment with Docker
 - Kubernetes orchestration with Microk8s
 - Live documentation with MkDocs
 - Automated tasks with Makefile
-- Automated tests with pytest
 
 ## Prerequisites
 
 - Python 3.12
 - Docker
 - Microk8s
-- MongoDB
 - Redis
 
 ## Development
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/igor-rodrigues-ss/fapi-k8s.git
-cd fapi-k8s
+git clone https://github.com/igor-rodrigues-ss/fapi-celery-k8s.git
+cd fapi-celery-k8s
 ```
 
 2. Set up the environment:
@@ -44,29 +41,30 @@ cd fapi-k8s
 make install-dev
 ```
 
-3. Build and deploy to Kubernetes:
+3. Create .env file in root project based on template.env
+```bash
+cp template.env .env
+# Change env values in .env file
+```
+
+4. Build and deploy to Kubernetes:
 ```bash
 make start
 ```
 
-4. Start celery worker:
+5. Start celery worker:
 ```bash
 make celery
 ```
 
-5. Start flower:
+6. Start flower:
 ```bash
 make flower
 ```
 
-6. Start MkDocs server:
+7. Start MkDocs server:
 ```bash
 make docs
-```
-
-4. Run tests:
-```bash
-make test
 ```
 
 ## Production
@@ -82,7 +80,7 @@ make deploy
 
 ## Architecture Overview
 
-![Cluster Architecture](imgs/arch.png)
+![Cluster Architecture](docs/docs/imgs/arch.png)
 
 The system is built on a Kubernetes cluster architecture with the following key components:
 

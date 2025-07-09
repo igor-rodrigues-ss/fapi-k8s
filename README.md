@@ -1,4 +1,4 @@
-# FastAPI K8S
+# FastAPI Celery K8S
 
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.12-blue.svg)](https://fastapi.tiangolo.com/)
@@ -16,19 +16,16 @@ This project is a modern FastAPI application designed to run on Kubernetes clust
 - High-performance FastAPI backend
 - Asynchronous task processing with Celery
 - Redis for caching and task queue
-- Beanie for MongoDB ODM
 - Containerized deployment with Docker
 - Kubernetes orchestration with Microk8s
 - Live documentation with MkDocs
 - Automated tasks with Makefile
-- Automated tests with pytest
 
 ## Prerequisites
 
 - Python 3.12
 - Docker
 - Microk8s
-- MongoDB
 - Redis
 
 ## Development
