@@ -1,5 +1,8 @@
 import os
+import logging
 
-REDIS_URL = os.environ["REDIS_URL"]
 
-EXAMPLE = os.environ["EXAMPLE"]
+CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
+
+
+LOG_LEVEL = os.environ.get("LOG_LEVEL", logging.INFO)
