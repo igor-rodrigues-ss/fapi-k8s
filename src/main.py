@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 
-from src.core.setup import routes, loggers
+from src.core.setup import routes
 
 
 app = FastAPI()
 
 
-loggers.setup()
 routes.setup(app)
