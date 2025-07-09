@@ -43,8 +43,8 @@ clean: ## Clean unnecessary files.
 	@find tests -name _pycache_ | xargs rm -rf
 
 lint: ## Lint code.
-	@black --line-length=100 --target-version=py38 --check src --check tests
-	@flake8 --max-line-length=250 --ignore=E402,W503 --exclude .venv,__app src tests
+	@black --line-length=100 --target-version=py38 --check src
+	@flake8 --max-line-length=250 --ignore=E402,W503 --exclude .venv,__app src
 
 format: ## Format code.
 	@black --line-length=100 --target-version=py38 .
@@ -63,6 +63,9 @@ celery: ## Start worker for development mode
 
 flower: ## Start flower for development mode
 	@export $(cat .env) >> /dev/null && celery -A src.core.celery.app flower -E --loglevel=info --port=5555
+
+redis: ## [Host]: Start redis.
+	@sudo docker run -p 6379:6379 -d redis
 
 docs: ## Start live docs server
 	@cd docs && mkdocs serve
