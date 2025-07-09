@@ -1,5 +1,3 @@
 import os
 
-REDIS_URL = os.environ["REDIS_URL"]
-
-EXAMPLE = os.environ["EXAMPLE"]
+CELERY_BROKER_URL = os.environ["CELERY_BROKER_URL"]
