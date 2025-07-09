@@ -35,8 +35,8 @@ This project is a modern FastAPI application designed to run on Kubernetes clust
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/igor-rodrigues-ss/fapi-k8s.git
-cd fapi-k8s
+git clone https://github.com/igor-rodrigues-ss/fapi-celery-k8s.git
+cd fapi-celery-k8s
 ```
 
 2. Set up the environment:
@@ -44,29 +44,30 @@ cd fapi-k8s
 make install-dev
 ```
 
-3. Build and deploy to Kubernetes:
+3. Create .env file in root project based on template.env
+```bash
+cp template.env .env
+# Change env values in .env file
+```
+
+4. Build and deploy to Kubernetes:
 ```bash
 make start
 ```
 
-4. Start celery worker:
+5. Start celery worker:
 ```bash
 make celery
 ```
 
-5. Start flower:
+6. Start flower:
 ```bash
 make flower
 ```
 
-6. Start MkDocs server:
+7. Start MkDocs server:
 ```bash
 make docs
-```
-
-4. Run tests:
-```bash
-make test
 ```
 
 ## Production
